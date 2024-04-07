@@ -7,13 +7,6 @@ const closeModal = () => {
     document.getElementById('modal').classList.remove('active')
 }
 
-const tempClient = {
-    nome: "Nami",
-    email: 'nami@gmail.com',
-    celular: '6300000000',
-    cidade: 'Vila Cocoyasi'
-}
-
 //creat
 const getLocalStorage = () => JSON.parse(localStorage.getItem('db_client')) ?? [];
 const setLocalStorage = (dbClient) => localStorage.setItem('db_client', JSON.stringify(dbClient));
@@ -55,10 +48,46 @@ const saveClient = () => {
             cidade: document.getElementById('cidade').value
 
         }
-        createClient(client);        
+        createClient(client);
+        updateTable();
         closeModal();
     }
 }
+
+const createRow = (client) => {
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${client.nome}</td>
+        <td>${client.email}</td>
+        <td>${client.celular}</td>
+        <td>${client.cidade}</td>
+        <td>
+          <button type="button" class="button green" data-action="edit">Editar</button>
+           <button type="button" class="button red" data-action="delete">Excluir</button>
+         </td>
+    `
+    document.querySelector('#tableClient>tbody').appendChild(newRow);
+}
+
+const clearTable = () =>{
+    const rows = document.querySelectorAll('#tableClient>tbody tr');
+    rows.forEach(row => row.parentNode.removeChild(row));
+}
+
+const updateTable = () => {
+    const dbClient = readClient();
+    clearTable();
+    dbClient.forEach(createRow);
+}
+
+const editDelet = (event) => {
+    if(event.target.type == 'button'){
+
+        console.log(event.target.dataset.action);
+    }
+}
+
+updateTable()
 
 //event
 const createClient = (client) =>  {
@@ -73,3 +102,8 @@ document.getElementById('cadastrarCliente').addEventListener('click', openModal)
 document.getElementById('modalClose').addEventListener('click', closeModal)
 
 document.getElementById('salvar').addEventListener('click', saveClient);
+
+document.querySelector('#tableClient>tbody').addEventListener('click', editDelet);
+
+
+
